@@ -1,0 +1,10 @@
+[package]
+name = "zvm-core"
+version = "0.1.0"
+edition = "2024"
+description = "moneyvm's programmable-money VM, ported to Rust as a pure, replayable state machine for shielded ZEC"
+license = "Apache-2.0"
+
+[dependencies]
+ruint = "1"
+sha3 = "0.10"

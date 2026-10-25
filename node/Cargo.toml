@@ -1,0 +1,27 @@
+[package]
+name = "zvm-node"
+version = "0.1.0"
+edition = "2024"
+description = "zvm sequencer: signed commands, public log, replay and the HTTP API"
+license = "Apache-2.0"
+
+[[bin]]
+name = "zvm"
+path = "src/main.rs"
+
+[dependencies]
+zvm-core = { path = "../core" }
+zvm-wallet = { path = "../wallet" }
+rustls = { version = "0.23", default-features = false, features = ["ring"] }
+anyhow = "1"
+axum = "0.8"
+clap = { version = "4.5", features = ["derive"] }
+ed25519-dalek = { version = "2.2", features = ["rand_core"] }
+rand = "0.8"
+hex = "0.4"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha3 = "0.10"
+tower-http = { version = "0.6", features = ["fs"] }
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync"] }
+

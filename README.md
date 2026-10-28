@@ -1,7 +1,7 @@
 # zvm: programmable money for shielded Zcash
 
 zvm lets shielded ZEC carry rules. You deposit ZEC with a memo and receive a **note**: the same money, now holding a
-256-bit moneyvm instruction that runs on every transfer. A note can expire, unlock on a
+256-bit rule instruction that runs on every transfer. A note can expire, unlock on a
 date, sit in escrow until an arbiter decides, wait behind a hash lock, or refuse any single transfer above a cap,
 whoever holds it. When you leave, the vault pays you shielded ZEC again.
 
@@ -20,7 +20,7 @@ The public demo resets each time it restarts, so you can't break it for the next
 
 ## What you can do
 
-| | What happens | moneyvm feature |
+| | What happens | Under the hood |
 |---|---|---|
 | **Deposit** | Send shielded ZEC to the vault with memo `zvm1:dep:<owner id>`. After 2 confirmations you hold a note for that amount. Optionally lock it until a date or make it expire. | token id with time mode |
 | **Send** | Move part or all of a note to another owner id. Every rule on it runs first; if one refuses, nothing moves. | transfer + `CoprocessorVM` |
@@ -31,7 +31,7 @@ The public demo resets each time it restarts, so you can't break it for the next
 | **Audit** | Download the signed log, replay it, check every state root and the roots anchored on Zcash. | |
 
 Keys are ed25519, made and kept in your browser. Your owner id is the first 20 bytes of
-`SHA3-256("zvm-owner-v1" ‖ public key)`, the width moneyvm's ISA expects for an address.
+`SHA3-256("zvm-owner-v1" ‖ public key)`, the address width the VM's instruction set expects.
 
 ## How it works
 
@@ -45,7 +45,7 @@ flowchart LR
     direction TB
     wallet["Vault wallet<br/>reads deposit memos<br/>pays withdrawals<br/>anchors state roots"]
     seq["Sequencer<br/>orders everything<br/>into the public log"]
-    core["zvm-core<br/>moneyvm in Rust<br/>escrow · hash lock"]
+    core["zvm-core<br/>rules VM<br/>escrow · hash lock"]
     wallet <-- "deposits in<br/>withdrawals out" --> seq
     seq <-- "run the rules<br/>new state root" --> core
   end
@@ -56,7 +56,7 @@ flowchart LR
   anyone -. "replay the log,<br/>check the roots" .-> seq
 ```
 
-- **`core/`**: moneyvm ported from Solidity to Rust. No I/O and no clock of its own: block time and height arrive with
+- **`core/`**: the rules VM. No I/O and no clock of its own: block time and height arrive with
   each command, so the same log always produces the same state.
 - **`node/`**: the `zvm` binary. Sequencer (signed commands with nonces, append-only `log.jsonl` with the block,
   time and state root of every entry), HTTP API, web app server, and the vault loop: every 20 s it syncs the wallet,
@@ -92,7 +92,7 @@ On mainnet:
 Other commands: `zvm replay --dir <data>`, `zvm wallet-info`, `zvm keygen --out key.txt`,
 `zvm submit --key key.txt --cmd '{"op":"transfer",...}'`, `zvm owner <pubkey>`.
 
-Tests: `cargo test` (28 tests: codec round-trips, ALU and control flow, ledger, escrow, HTLC, moneyvm's freeze
+Tests: `cargo test` (28 tests: codec round-trips, ALU and control flow, ledger, escrow, HTLC, the reference freeze
 constant byte for byte, a scaled-down version of its tainted-branch scenario, sequencer replay and tamper detection,
 memo parsing). End to end in a browser: `node e2e/walk.mjs` against a `--fake` node (three users, 13 checks);
 set `ZVM_URL=https://zvm-demo.fly.dev` to run it against the public demo.
@@ -131,8 +131,8 @@ What zvm is today, plainly:
 
 ## Credits
 
-zvm is built on **moneyvm** by Sirawit Techavanitch (Apache-2.0), used with the author's permission. Issues found in
-moneyvm while porting are listed in [PLAN.md](PLAN.md#upstream-issues-found-while-porting-to-report-to-the-moneyvm-author).
+zvm's rules VM is based on the original design and code by Sirawit Techavanitch (Apache-2.0), used with the
+author's permission. Issues found in the original while building zvm are listed in [PLAN.md](PLAN.md).
 
 ## Mainnet
 

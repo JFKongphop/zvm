@@ -5,7 +5,7 @@ zvm lets shielded ZEC carry rules. You deposit ZEC with a memo and receive a **n
 date, sit in escrow until an arbiter decides, wait behind a hash lock, or refuse any single transfer above a cap,
 whoever holds it. When you leave, the vault pays you shielded ZEC again.
 
-[![zvm demo video: zvm makes shielded ZEC programmable](docs/video-cover.jpg)](https://youtu.be/x5zrCNWS_rY)
+[![zvm wallet: three notes, one carrying a spending cap. Click to watch the demo video](docs/video-cover.jpg)](https://youtu.be/x5zrCNWS_rY)
 
 Zcash has no smart contracts. zvm runs the VM off-chain as a deterministic state machine and uses Zcash for what it
 does best: moving money in and out privately, and timestamping the VM's state root in a shielded memo.
